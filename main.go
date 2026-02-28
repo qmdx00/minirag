@@ -15,8 +15,8 @@ import (
 //  2. 索引：向量化+存储，通过 embedding 模型对分片内容进行向量化，并存储到向量数据库中。
 //
 // 提问后处理:
-//  1. 召回：根据用户提示词从向量数据库召回 topN 条数据，根据相似度排序（成本低，速度快，准确度低）
-//  2. 重排：使用 cross encoder 模型对召回后结果进行重排，选出 topK 个最相关内容(成本高，耗时长，准确度高)
+//  1. 召回：根据用户提示词从向量数据库召回 topN 条数据，根据相似度排序（ANN 向量检索，成本低，速度快，准确度低）
+//  2. 重排：使用 Cross-Encoder 或者 LLM Reranker 模型对召回后结果进行重排，选出 topK 个最相关内容(成本高，耗时长，准确度高)
 //  3. 生成：将重排后的内容与用户提示词一起输入到大模型，获取输出结果。
 
 func main() {
@@ -54,7 +54,7 @@ func main() {
 		return results[i].Similarity > results[j].Similarity
 	})
 
-	// Cross encoder 模型重排 (暂不进行重排，直接取召回相似度高的3条)
+	// 使用 Cross-Encoder 或者 LLM Reranker 模型重排 (暂不进行重排，直接取召回相似度高的3条)
 	fmt.Printf("\nTOP3 results: ====================\n")
 	rerankResults := results[:3]
 	printResults(rerankResults)
